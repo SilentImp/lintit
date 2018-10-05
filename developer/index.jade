@@ -1,0 +1,299 @@
+extends ./partials/layout.jade
+
+block title
+  title Lint it your Way
+
+block slides
+
+  article.cover.cloud.center
+    h1 
+      p.wrapper Lint it your Way
+
+  article.illustration.illustration-h1.cloud.center.why
+    h1
+      p.wrapper 
+        b Code Style
+
+  article.illustration.illustration-b1
+    .subtitle  
+      p — It easy while you work alone.
+
+  article.illustration.illustration-h2
+    .subtitle  
+      p — But then your team start to grow …
+  
+  article.illustration.illustration-b2
+    .subtitle  
+      p — And config became more complex …
+
+  article.illustration.illustration-h25
+    .subtitle  
+      p … and more …
+  
+  article.illustration.illustration-b25
+    .subtitle  
+      p — Configuration became nightmare …
+
+  article.illustration.illustration-h3
+    .subtitle  
+      p … and even more …
+  
+  article.illustration.illustration-b3
+    .subtitle  
+      p … and then you realize, that you need custom rules.
+
+  article.screen.screen--bc
+    .subtitle  
+      p Let's forbis string classes! CSS-Modules all the things!
+
+
+  article.center.code-9
+    .wrapper
+      pre
+        code.bash.
+          npm i -g yo
+          npm i -g generator-eslint
+          mkdir company-lint
+          cd company-lint
+          yo eslint:plugin
+
+  article.screen.screen--yo-1
+    
+  article.center.code-9
+    .wrapper
+      pre
+        code.bash.
+          yo eslint:rule
+    
+  article.screen.screen--yo-2
+  
+  article.screen.screen--yo-3
+    
+  article.center.code-2
+    .wrapper
+      pre
+        code.javascript.
+          const parserOptions = {
+            ecmaVersion: 2018,
+            sourceType: 'module',
+            ecmaFeatures: {
+              jsx: true
+            }
+          };
+
+          var ruleTester = new RuleTester({parserOptions});
+
+  article.center.code-3
+    .wrapper
+      pre
+        code.javascript.
+          valid: [{ code: `
+                import React, { PureComponent } from 'react';
+                import styles from './Cart.css';
+
+                class Cart extends PureComponent {
+                  render() {
+                    return (&lt;p className={styles.Cart}>…&lt;/p>)
+                  }
+                }
+                export default Cart;
+          `}]
+  
+          
+  article.center.code-3
+    .wrapper
+      pre
+        code.javascript.
+          invalid: [{code: `
+            import React, { PureComponent } from 'react';
+            class Cart extends PureComponent {
+              render() {
+                return (&lt;p className='Cart'>…&lt;/p>)
+              }
+            }
+            export default Cart;`,
+            errors: [{
+                message: "You should use css modules instead",
+                type: "JSXAttribute"
+            }]}]
+  
+  article.center.code-1
+    .wrapper
+      pre
+        code.javascript.
+          module.exports = {
+            create: function(context) {
+              return {
+                "selector": handler,
+              }
+            },
+          };
+
+  article.center.code-9
+    .wrapper
+      pre
+        code.bash.
+          https://astexplorer.net/
+  
+  article.screen.screen--yo-5
+    
+  article.center.code-2
+    .wrapper
+      pre
+        code.javascript.
+          "JSXAttribute": function (node) {
+            if (
+              (node.name.name === 'className')
+              && (node.value.type === 'Literal')
+            ) {
+              context.report({
+                node,
+                message: 'You should use css modules instead'
+              })
+            }
+          },
+  
+  article.center.code-9
+    .wrapper
+      pre
+        code.bash.
+          npm i
+          npm t
+          
+  article.screen.screen--yo-4
+
+  article.center.code-9
+    .wrapper
+      pre
+        code.bash.
+          npm publish
+
+  article.center.code-9
+    .wrapper
+      pre
+        code.bash.
+          npm i -D company-lint
+
+  article.center.code-1
+    .wrapper
+      pre
+        code.bash.
+          // .eslintrc
+          "plugins": [
+            "company-lint",
+          ],
+          "rules": {
+            "company-lint/no-string-classname": 2,
+          },
+
+  article.screen.screen--yo-6
+
+  article.screen.screen--bc
+    .subtitle
+      p Let's lint commit message!
+
+  article.center.code-9
+    .wrapper
+      pre
+        code.bash.
+          npm init
+          
+  article.center.code-8
+    .wrapper
+      pre
+        code.bash.
+          npm i -S command-line-args
+  
+  article.center.code-8
+    .wrapper
+      pre
+        code.javascript.
+          // index.js
+          #! /usr/bin/env node
+          
+  article.center.code-1
+    .wrapper
+      pre
+        code.javascript.
+          // index.js
+          #! /usr/bin/env node
+          const fs = require('fs');
+          const filePath = process.argv[2];
+          if (!fs.existsSync(filePath)) {
+            console.log('Can not read commit message');
+            process.exit(1);
+          }
+          const message = fs.readFileSync(filePath);
+
+  article.center.code-2
+    .wrapper
+      pre
+        code.javascript.
+          const commandLineArgs = require('command-line-args');
+          const optionDefinitions = [{ 
+            name: 'regexp', 
+            alias: 'r', 
+            type: String, 
+            defaultValue: '^[A-Z]+-[0-9]+\s-\s[\W\w\s]{5,}[\s]*$' },
+          ];
+          const cli = commandLineArgs(optionDefinitions);
+
+  article.center.code-1
+    .wrapper
+      pre
+        code.javascript.
+          const commonRegexp = new RegExp(
+            cli.regexp, 
+            'ig'
+          );
+          if (!commonRegexp.test(message)) {
+            console.log("Wrong commit message format");
+            process.exit(3);
+          }
+          process.exit(0);
+  
+  article.center.code-1
+    .wrapper
+      pre
+        code.json.
+          // package.json
+          "name": "my-message-hook",
+          "main": "index.js",
+          "bin": {"commit-msg": "index.js"},
+          "scripts": {
+            "release": "npm version patch && 
+                        git push --tags && 
+                        npm publish --access public"
+          }
+  
+  article.center.code-8
+    .wrapper
+      pre
+        code.bash.
+          $ npm i -S my-message-hook
+          $ npm i -D husky
+  
+  article.center.code-6
+    .wrapper
+      pre
+        code.json.
+          // package.json
+          "scripts": {
+            "commitmsg": "commit-msg  
+                            ${GIT_PARAMS} 
+                            -r MyRegExp"
+          },
+
+  article.contacts.center.qrcode
+    .wrapper
+      .about-speaker.half
+        p.name Anton Nemtsev
+        p.link http://silentimp.info/
+        p.twitter @silentimp
+        p.email thesilentimp@gmail.com
+        p.skype skype: ravencry
+      .half
+        img(src="images/git.svg", alt="QRCODE cо ссылкой на доклад")
+
+      p
+        a(href="https://github.com/SilentImp/lintit", data-click=true) https://github.com/SilentImp/lintit
